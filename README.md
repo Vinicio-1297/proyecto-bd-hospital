@@ -126,10 +126,10 @@ Marca cada casilla (`[x]`) cuando esté lista.
 | Hecho | Tarea | Qué entregar | Pts | Responsable |
 |---|---|---|---|---|
 | [ ] | **Importación real de datos** | Cargar datos desde un archivo CSV (asistente de SSMS o `BULK INSERT`), validarlos y pasarlos a la tabla real, como evidencia de migración | 5 | Vinicio |
-| [ ] | **Medir "antes" de los índices** | Consulta de prueba con plan de ejecución real y lecturas lógicas, **antes** de crear los índices | 10 | Nombre 2 |
-| [ ] | **Índices** | Script propio de índices (`05_indices.sql`, con `DROP INDEX IF EXISTS` + `CREATE INDEX`) y repetir la medición ("después") | 10 | Nombre 2 |
-| [ ] | **Consultas avanzadas** | Consultas con funciones ventana (ranking, acumulados, `LAG`) | 10 | Nombre 2 |
-| [ ] | **Respaldo y recuperación** | Backup completo, diferencial y de log, más una restauración de prueba | 10 | Nombre 2 |
+| [ ] | **Medir "antes" de los índices** | Consulta de prueba con plan de ejecución real y lecturas lógicas, **antes** de crear los índices | 10 | Gary |
+| [ ] | **Índices** | Script propio de índices (`05_indices.sql`, con `DROP INDEX IF EXISTS` + `CREATE INDEX`) y repetir la medición ("después") | 10 | Gary |
+| [ ] | **Consultas avanzadas** | Consultas con funciones ventana (ranking, acumulados, `LAG`) | 10 | Gary |
+| [ ] | **Respaldo y recuperación** | Backup completo, diferencial y de log, más una restauración de prueba | 10 | Gary |
 | [ ] | **Dashboard en Power BI** | Archivo `.pbix` conectado a las vistas, con al menos 3 visualizaciones | 15 | Nombre 3 |
 | [ ] | **Dimensionamiento** | Tamaño estimado de la base y plan de crecimiento de los archivos | informe | Nombre 3 |
 | [ ] | **Informe** | Word/PDF de máximo 30 páginas. Cada quien entrega su sección con capturas; |  (con la presentación)  |

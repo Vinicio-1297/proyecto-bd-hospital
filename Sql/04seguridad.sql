@@ -4,7 +4,7 @@
 USE GestionHospitalaria;
 GO
 
-/* Enmascarado de datos: quien no tenga UNMASK ve 'XXXX-1234' en los telefonos */
+/* Enmascarado de datos: quien no tenga UNMASK ve 'XXXX-1234' en los telefonos */ 
 ALTER TABLE Paciente ALTER COLUMN Telefono
     ADD MASKED WITH (FUNCTION = 'partial(0,"XXXX-",4)');
 ALTER TABLE Paciente ALTER COLUMN ContactoEmergenciaTelefono
