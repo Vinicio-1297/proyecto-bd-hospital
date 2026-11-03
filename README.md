@@ -141,5 +141,5 @@ Marca cada casilla (`[x]`) cuando esté lista.
 | Persona | Secciones |
 |---|---|
 | Vinicio | Introducción, diseño de la base de datos, carga de datos, seguridad |
-| Nombre 2 | Optimización y consultas avanzadas, respaldo y recuperación |
+| Gary | Optimización y consultas avanzadas, respaldo y recuperación |
 | Nombre 3 | Dimensionamiento, dashboard en Power BI, conclusiones y formato final |
