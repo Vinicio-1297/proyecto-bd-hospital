@@ -73,7 +73,8 @@ GRANT SELECT, INSERT, UPDATE ON Facturacion    TO rol_facturacion;
 GRANT SELECT, INSERT, UPDATE ON DetalleFactura TO rol_facturacion;
 GRANT SELECT ON Paciente   (PacienteID, Nombre, Apellido) TO rol_facturacion;
 GRANT SELECT ON Admisiones  (AdmisionID, PacienteID, MedicoID, FechaIngreso, FechaAlta) TO rol_facturacion;
-GRANT SELECT ON Citas       TO rol_facturacion;
+REVOKE SELECT ON Citas FROM rol_facturacion;   -- por si antes tenia acceso a toda la tabla
+GRANT SELECT ON Citas (CitaID, PacienteID, MedicoID, FechaHora, Estado, Costo) TO rol_facturacion;   -- sin Motivo
 GRANT SELECT ON Tratamiento TO rol_facturacion;
 GRANT SELECT ON vw_FacturacionResumen TO rol_facturacion;
 DENY  SELECT ON RecetasMedicas TO rol_facturacion;
