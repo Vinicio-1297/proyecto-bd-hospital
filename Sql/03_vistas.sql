@@ -26,6 +26,8 @@ FROM   Citas AS c
 
 
 GO
+/* MontoTotal suma todas las facturas (tambien las Anuladas).
+   Para ingresos se usara MontoPagado; para lo que falta cobrar, MontoPendiente. */
 CREATE OR ALTER VIEW vw_FacturacionResumen
 AS
 SELECT   f.FacturacionID,
@@ -34,7 +36,9 @@ SELECT   f.FacturacionID,
          p.PacienteID,
          p.Nombre + N' ' + p.Apellido AS Paciente,
          COUNT(d.DetalleID) AS Lineas,
-         ISNULL(SUM(d.Monto), 0) AS MontoTotal
+         ISNULL(SUM(d.Monto), 0) AS MontoTotal,
+         ISNULL(SUM(CASE WHEN f.Estado = N'Pagada'    THEN d.Monto END), 0) AS MontoPagado,
+         ISNULL(SUM(CASE WHEN f.Estado = N'Pendiente' THEN d.Monto END), 0) AS MontoPendiente
 FROM     Facturacion AS f
          INNER JOIN
          Paciente AS p
