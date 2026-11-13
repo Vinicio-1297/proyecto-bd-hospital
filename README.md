@@ -18,14 +18,19 @@ Base de datos: `GestionHospitalaria`.
 
 ## Cómo ejecutar los scripts
 
-Corre los archivos de la carpeta `sql/` **en este orden**, abriendo cada uno en SSMS y pulsando **F5**:
+Corre los archivos de la carpeta `Sql/` **en este orden**, abriendo cada uno en SSMS y pulsando **F5**:
 
 | Paso | Archivo | Qué hace | Notas |
 |---|---|---|---|
-| 1 | `01_tablas.sql` | Crea la base y las 9 tablas con PK, FK, `CHECK`, `UNIQUE` y `DEFAULT` | **Borra y recrea las tablas.** Úsalo con la base vacía. |
-| 2 | `02_datos.sql` | Carga datos de prueba | Córrelo **una sola vez**; si lo repites duplica filas. Si ya lo corriste, vuelve a correr el paso 1 antes. |
+| 1 | `01_tablas.sql` | Crea la base (si no existe) y las 9 tablas con PK, FK, `CHECK`, `UNIQUE` y `DEFAULT` | **Borra y recrea las tablas** (se pierden los datos). Si ya habías corrido los pasos 3 y 4, vuelve a correrlos después. |
+| 2 | `02_datos.sql` | Carga datos de prueba | Si ya hay datos, no inserta nada. Para recargar, corre antes el paso 1. |
 | 3 | `03_vistas.sql` | Crea 3 vistas para Power BI | Se puede repetir sin problema. |
 | 4 | `04_seguridad.sql` | Logins, usuarios, roles, permisos y enmascarado de datos | Requiere los pasos 1 y 3. |
+| 5a | `05a_medicion_antes.sql` | Mide 3 consultas **sin** índices (plan real y lecturas lógicas) | Quita los índices del paso 5b para que el "antes" sea real. |
+| 5b | `05b_indices.sql` | Crea los índices y repite la medición ("después") | Se puede repetir sin problema. |
+| 6 | `06_respaldo.sql` | Backup completo, diferencial y de log, y restauración de prueba | Correr por secciones y **una sola vez**. Ajusta las rutas si SQL Server corre en Windows. |
+| 7 | `07_consultas_avanzadas.sql` | Consultas con funciones ventana (ranking, acumulados, `LAG`) | Solo lectura. |
+| 8 | `08_importacion_csv.sql` | Importa `datos/pacientes_nuevos.csv` con `BULK INSERT`, valida cada fila y pasa las buenas a `Paciente` | Detecta si SQL Server corre en Windows o Linux. Antes de correrlo copia el CSV donde lo lea el servidor (Windows: `C:\Temp\`; Docker: `docker cp` a `/var/opt/mssql/data/`). Si en Linux se dañan las tildes, usa `pacientes_nuevos_sin_tildes.csv`. Se puede repetir sin duplicar. |
 
 
 > Antes de empezar, confirma que el desplegable de base de datos de SSMS diga `GestionHospitalaria` (o que el script tenga su `USE`, como ya trae).
@@ -87,7 +92,7 @@ Al terminar, el script muestra el conteo de filas por tabla y el de citas y fact
 | Vista | Para qué sirve |
 |---|---|
 | `vw_CitasDetalle` | Citas con paciente, médico, especialidad y consultorio ya unidos |
-| `vw_FacturacionResumen` | Facturas con su monto total calculado |
+| `vw_FacturacionResumen` | Facturas con su monto total calculado (`MontoTotal`), y los montos `MontoPagado` y `MontoPendiente`. Para ingresos en Power BI usa `MontoPagado`: `MontoTotal` incluye facturas anuladas |
 | `vw_TratamientosDetalle` | Tratamientos con su paciente y médico |
 
 Están pensadas para conectar Power BI sin dar acceso a las tablas.
@@ -102,7 +107,7 @@ Cada rol tiene un login, un usuario y un rol en la base. Las contraseñas del sc
 |---|---|---|
 | `rol_recepcion` | Ver y registrar pacientes y citas; ver médicos y consultorios; ver teléfonos completos | Ver recetas, tratamientos ni facturación; borrar pacientes o citas |
 | `rol_medico` | Ver pacientes y citas; cambiar solo el `Estado` de una cita; registrar admisiones, tratamientos y recetas; ver teléfonos completos | Cambiar otras columnas de las citas; ver facturación |
-| `rol_facturacion` | Gestionar facturas y su detalle; ver nombre y apellido del paciente, citas, tratamientos y admisiones **sin el diagnóstico** | Ver recetas o teléfonos; borrar facturas |
+| `rol_facturacion` | Gestionar facturas y su detalle; ver nombre y apellido del paciente, citas (**sin el motivo**), tratamientos y admisiones (**sin el diagnóstico**) | Ver recetas o teléfonos; borrar facturas |
 | `rol_powerbi` | Leer las 3 vistas | Acceder directo a las tablas |
 
 **Enmascarado de datos:** `Paciente.Telefono` y `Paciente.ContactoEmergenciaTelefono` se muestran como `XXXX-1234` a quien no tenga el permiso `UNMASK`.
@@ -125,14 +130,14 @@ Marca cada casilla (`[x]`) cuando esté lista.
 
 | Hecho | Tarea | Qué entregar | Pts | Responsable |
 |---|---|---|---|---|
-| [ ] | **Importación real de datos** | Cargar datos desde un archivo CSV (asistente de SSMS o `BULK INSERT`), validarlos y pasarlos a la tabla real, como evidencia de migración | 5 | Vinicio |
+| [ ] | **Importación real de datos** | Cargar datos desde un archivo CSV (asistente de SSMS o `BULK INSERT`), validarlos y pasarlos a la tabla real, como evidencia de migración. Script listo: `Sql/08_importacion_csv.sql` con `datos/pacientes_nuevos.csv`; falta correrlo y guardar las capturas | 5 | Vinicio |
 | [ ] | **Medir "antes" de los índices** | Consulta de prueba con plan de ejecución real y lecturas lógicas, **antes** de crear los índices | 10 | Gary |
-| [ ] | **Índices** | Script propio de índices (`05_indices.sql`, con `DROP INDEX IF EXISTS` + `CREATE INDEX`) y repetir la medición ("después") | 10 | Gary |
+| [ ] | **Índices** | Script propio de índices (`05b_indices.sql`, con `DROP INDEX IF EXISTS` + `CREATE INDEX`) y repetir la medición ("después") | 10 | Gary |
 | [ ] | **Consultas avanzadas** | Consultas con funciones ventana (ranking, acumulados, `LAG`) | 10 | Gary |
 | [ ] | **Respaldo y recuperación** | Backup completo, diferencial y de log, más una restauración de prueba | 10 | Gary |
 | [ ] | **Dashboard en Power BI** | Archivo `.pbix` conectado a las vistas, con al menos 3 visualizaciones | 15 | Nombre 3 |
 | [ ] | **Dimensionamiento** | Tamaño estimado de la base y plan de crecimiento de los archivos | informe | Nombre 3 |
-| [ ] | **Informe** | Word/PDF de máximo 30 páginas. Cada quien entrega su sección con capturas; |  (con la presentación)  |
+| [ ] | **Informe** | Word/PDF de máximo 30 páginas. Cada quien entrega su sección con capturas | con la presentación | Todos |
 | [ ] | **Presentación** | Demo del sistema, consultas clave y dashboard final; cada quien presenta su parte | | Todos |
 | [ ] | **Evidencias** | Capturas de cada paso guardadas en `docs/` | informe | Cada quien, de su parte |
 
