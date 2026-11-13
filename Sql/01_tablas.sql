@@ -1,12 +1,25 @@
+
+
+IF DB_ID(N'GestionHospitalaria') IS NULL
     CREATE DATABASE GestionHospitalaria;
 GO
- 
+
 USE GestionHospitalaria;
 GO
 
 
 /* ===================== 1. TABLAS ===================== */
 
+/* Se borran de hijas a padres para respetar las llaves foraneas */
+DROP TABLE IF EXISTS DetalleFactura;
+DROP TABLE IF EXISTS Facturacion;
+DROP TABLE IF EXISTS Tratamiento;
+DROP TABLE IF EXISTS RecetasMedicas;
+DROP TABLE IF EXISTS Admisiones;
+DROP TABLE IF EXISTS Citas;
+DROP TABLE IF EXISTS Medico;
+DROP TABLE IF EXISTS Consultorio;
+DROP TABLE IF EXISTS Paciente;
 
 
 GO
