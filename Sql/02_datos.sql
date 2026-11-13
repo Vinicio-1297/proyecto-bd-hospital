@@ -1,14 +1,22 @@
 /* GestionHospitalaria - Paso 2: DATOS DE PRUEBA
    Requiere el paso 1. Carga 300 pacientes, 12 medicos, 1500 citas, etc.
-   no correrlo dos veces */
+   Si ya hay datos no hace nada (para repetir la carga, corre antes 01_tablas.sql). */
 
 USE GestionHospitalaria;
 GO
+
+
 
 /* ===================== 4. DATOS DE PRUEBA ===================== */
 /* Todo en un solo lote (sin GO) porque usa variables y tablas temporales. */
 /*#SrcF es una tabla temporal*/
 SET NOCOUNT ON;
+
+IF EXISTS (SELECT 1 FROM Paciente)
+BEGIN
+    PRINT N'Ya hay datos cargados: no se insertó nada. Corre 01_tablas.sql para empezar de cero.';
+    RETURN;
+END
 
 DECLARE @ahora DATETIME2(0) = SYSDATETIME();
 DECLARE @hoy   DATE         = CAST(@ahora AS DATE);
@@ -81,7 +89,8 @@ SELECT  ((k.n * 37) % 300) + 1,
              WHEN k.n % 9  = 0    THEN N'Cancelada'
              WHEN k.n % 13 = 0    THEN N'No asistió'
              ELSE N'Atendida' END,
-        30 + ((((k.n - 1) % 12) + 1) % 4) * 15,
+        CASE WHEN f.fh > @ahora OR k.n % 9 = 0 OR k.n % 13 = 0 THEN 0   /* solo las atendidas tienen costo */
+             ELSE 30 + ((((k.n - 1) % 12) + 1) % 4) * 15 END,
         CHOOSE((k.n % 6) + 1, N'Control general', N'Dolor abdominal', N'Chequeo de presión arterial',
                             N'Revisión de resultados', N'Dolor de cabeza persistente', N'Seguimiento de tratamiento')
 FROM    #Nums k
