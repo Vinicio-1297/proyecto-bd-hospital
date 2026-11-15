@@ -74,8 +74,7 @@ GO
 /* ===== 3. MEDICIÓN "DESPUÉS" (mismas consultas que 05a) ===== */
 
 /* ---------- CONSULTA 1: historial de citas de un paciente ----------
-   Caso de uso: recepción/médico abre la ficha de un paciente. Filtra Citas por PacienteID (una FK sin índice).
-   Selecciona TODO este bloque (hasta el GO) y pulsa F5 con el plan real activado (Ctrl+M). */
+   Caso de uso: recepción/médico abre la ficha de un paciente. Filtra Citas por PacienteID */
 CHECKPOINT; DBCC DROPCLEANBUFFERS;   -- solo en servidor de desarrollo: deja la caché limpia
 DECLARE @PacienteID INT = (SELECT TOP (1) PacienteID FROM dbo.Facturacion
                           GROUP BY PacienteID ORDER BY COUNT(*) DESC, PacienteID);
@@ -96,7 +95,7 @@ GO
 
 /* ---------- CONSULTA 2: ingresos por especialidad (últimos 30 días) ----------
    Caso de uso: reporte/dashboard. Filtra Citas por Estado y rango de FechaHora y agrupa por especialidad.
-   Selecciona TODO este bloque (hasta el GO) y pulsa F5 con el plan real activado (Ctrl+M). */
+   */
 CHECKPOINT; DBCC DROPCLEANBUFFERS;   -- solo en servidor de desarrollo: deja la caché limpia
 DECLARE @Hasta DATETIME = GETDATE();
 DECLARE @Desde DATETIME = DATEADD(DAY, -30, @Hasta);
@@ -120,7 +119,7 @@ GO
 
 /* ---------- CONSULTA 3: estado de cuenta de un paciente (facturas + detalle) ----------
    Caso de uso: facturación revisa lo que debe un paciente. Une Facturacion y DetalleFactura por FK sin índice.
-   Selecciona TODO este bloque (hasta el GO) y pulsa F5 con el plan real activado (Ctrl+M). */
+    */
 CHECKPOINT; DBCC DROPCLEANBUFFERS;   -- solo en servidor de desarrollo: deja la caché limpia
 DECLARE @PacienteID INT = (SELECT TOP (1) PacienteID FROM dbo.Facturacion
                           GROUP BY PacienteID ORDER BY COUNT(*) DESC, PacienteID);
